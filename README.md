@@ -18,6 +18,7 @@ dc = DiscoveryClient(authority = "https://your.identityserver.com")
 
 dcr = IdentityModel.get(dc)
 
+
 tc1 = TokenClient(endpoint = dcr.TokenEndpoint, clientId = "Client1", clientSecret = "secret")
 
 t1 = request_client_credentials(tc1; scope = "Scope")
