@@ -1,9 +1,8 @@
 using HTTP
-using Requests
 using JSON
 
 
-type DiscoveryClient
+struct DiscoveryClient
     Authority::String
 
     function DiscoveryClient(;
@@ -14,7 +13,7 @@ type DiscoveryClient
 
 end
 
-type DiscoveryResponse
+struct DiscoveryResponse
     TokenEndpoint::String
 
     function DiscoveryResponse(;
@@ -24,7 +23,7 @@ type DiscoveryResponse
 
 end
 
-type TokenClient
+struct TokenClient
     Endpoint::String
     Headers::Dict
     Payload::Dict
@@ -42,14 +41,14 @@ type TokenClient
 
 end
 
-type TokenResponse
+struct TokenResponse
     AccessToken::String
     TokenType::String
     ExpiresIn::Int
 
     function TokenResponse(response)
         if response.status == 200
-            r = Requests.json(response)
+            r = JSON.parse(String(response.body))
             return new(r["access_token"], r["token_type"], r["expires_in"])
         end
         response
@@ -68,7 +67,7 @@ function add_scope(data, scope)
 end
 
 function request(client::TokenClient, payload)
-    r = Requests.post(client.Endpoint; headers = client.Headers, data = HTTP.URIs.escapeuri(payload))
+    r = HTTP.post(client.Endpoint, client.Headers, HTTP.URIs.escapeuri(payload))
     return TokenResponse(r)
 end
 
